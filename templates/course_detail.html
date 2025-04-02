@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title mb-4">
+                    <i class="fas fa-book me-2"></i>{{ course.course_name }}
+                </h1>
+                
+                <div class="mb-4">
+                    <span class="badge bg-primary me-2">
+                        <i class="fas fa-folder me-1"></i>{{ course.category }}
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fas fa-clock me-1"></i>{{ course.duration }}
+                    </span>
+                </div>
+
+                <div class="mb-4">
+                    <h5>
+                        <i class="fas fa-user-tie me-2"></i>Instructor
+                    </h5>
+                    <p class="lead">{{ course.instructor }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>
+                        <i class="fas fa-info-circle me-2"></i>Course Description
+                    </h5>
+                    <p>{{ course.description }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>
+                        <i class="fas fa-exclamation-circle me-2"></i>Prerequisites
+                    </h5>
+                    <p>{{ course.prerequisites }}</p>
+                </div>
+
+                <div class="mb-4">
+                    <h5>
+                        <i class="fas fa-tools me-2"></i>Course Materials
+                    </h5>
+                    <ul class="list-group">
+                        {% for material in course.materials.split('\n') %}
+                        <li class="list-group-item">
+                            <i class="fas fa-check-circle text-success me-2"></i>{{ material }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h5>
+                        <i class="fas fa-calendar-alt me-2"></i>Course Schedule
+                    </h5>
+                    <div class="list-group">
+                        {% for week in course.schedule.split('\n') %}
+                        <div class="list-group-item">
+                            <i class="fas fa-calendar-week text-primary me-2"></i>{{ week }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% if 'user' in session %}
+                    {% if not is_enrolled %}
+                    <div class="text-center mb-4">
+                        <a href="{{ url_for('enroll_course', index=courses[courses['course_name'] == course.course_name].index[0]) }}" 
+                           class="btn btn-success">
+                            <i class="fas fa-user-plus me-1"></i>Enroll in Course
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="mb-4">
+                        <h5>
+                            <i class="fas fa-chart-line me-2"></i>Your Progress
+                        </h5>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" style="width: {{ progress }}%">
+                                {{ progress }}%
+                            </div>
+                        </div>
+                        <form method="POST" action="{{ url_for('update_progress', index=courses[courses['course_name'] == course.course_name].index[0]) }}">
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="progress" min="0" max="100" value="{{ progress }}" required>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>Update Progress
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-question-circle me-2"></i>Course Quiz
+                                    </h5>
+                                    <p class="card-text">Test your knowledge with our course quiz.</p>
+                                    <a href="{{ url_for('take_quiz', index=courses[courses['course_name'] == course.course_name].index[0]) }}" 
+                                       class="btn btn-primary">
+                                        <i class="fas fa-play me-1"></i>Take Quiz
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-comments me-2"></i>Discussion Forum
+                                    </h5>
+                                    <p class="card-text">Join the discussion with other students.</p>
+                                    <a href="{{ url_for('course_forum', index=courses[courses['course_name'] == course.course_name].index[0]) }}" 
+                                       class="btn btn-primary">
+                                        <i class="fas fa-comments me-1"></i>View Forum
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>
+                            <i class="fas fa-download me-2"></i>Course Resources
+                        </h5>
+                        <div class="list-group">
+                            {% for resource in resources %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-file-{{ resource.type }} me-2"></i>
+                                    {{ resource.name }}
+                                    <small class="text-muted ms-2">({{ resource.size }})</small>
+                                </div>
+                                <a href="{{ url_for('download_resource', index=courses[courses['course_name'] == course.course_name].index[0], resource_index=loop.index0) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-download me-1"></i>Download
+                                </a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if is_completed %}
+                    <div class="text-center mb-4">
+                        <a href="{{ url_for('download_certificate', index=courses[courses['course_name'] == course.course_name].index[0]) }}" 
+                           class="btn btn-warning">
+                            <i class="fas fa-certificate me-1"></i>Download Certificate
+                        </a>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <h5>
+                            <i class="fas fa-star me-2"></i>Your Review
+                        </h5>
+                        {% if user_review %}
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="mb-2">
+                                        {% for i in range(user_review.rating) %}
+                                        <i class="fas fa-star text-warning"></i>
+                                        {% endfor %}
+                                    </div>
+                                    <p class="card-text">{{ user_review.comment }}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>{{ user_review.date }}
+                                    </small>
+                                </div>
+                            </div>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('submit_review', index=courses[courses['course_name'] == course.course_name].index[0]) }}">
+                                <div class="mb-3">
+                                    <label class="form-label">Rating</label>
+                                    <div class="rating">
+                                        {% for i in range(5, 0, -1) %}
+                                        <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}" required>
+                                        <label for="star{{ i }}">
+                                            <i class="fas fa-star"></i>
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Comment</label>
+                                    <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-1"></i>Submit Review
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="text-center">
+                        <p class="text-muted">Please <a href="{{ url_for('login') }}">login</a> to enroll in this course and leave a review.</p>
+                    </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('home') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Courses
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    .rating input {
+        display: none;
+    }
+    .rating label {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #ddd;
+        padding: 0 0.1rem;
+    }
+    .rating input:checked ~ label,
+    .rating label:hover,
+    .rating label:hover ~ label {
+        color: #ffd700;
+    }
+    .progress {
+        height: 25px;
+    }
+    .progress-bar {
+        background-color: #28a745;
+    }
+</style>
+{% endblock %} 

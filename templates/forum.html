@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h1 class="card-title mb-4">
+                    <i class="fas fa-comments me-2"></i>{{ course.course_name }} Discussion Forum
+                </h1>
+                
+                <form method="POST" class="mb-4">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-1"></i>Create Post
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Discussion Posts</h2>
+                
+                {% if posts %}
+                    {% for post in posts %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                            <p class="card-text">{{ post.content }}</p>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>{{ post.user }}
+                                    <i class="fas fa-calendar ms-2 me-1"></i>{{ post.date }}
+                                </small>
+                            </div>
+                            
+                            {% if post.replies %}
+                            <div class="ms-4">
+                                <h6 class="mb-3">Replies:</h6>
+                                {% for reply in post.replies %}
+                                <div class="card mb-2">
+                                    <div class="card-body">
+                                        <p class="card-text">{{ reply.content }}</p>
+                                        <small class="text-muted">
+                                            <i class="fas fa-user me-1"></i>{{ reply.user }}
+                                            <i class="fas fa-calendar ms-2 me-1"></i>{{ reply.date }}
+                                        </small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            
+                            <form method="POST" action="{{ url_for('reply_to_post', index=courses[courses['course_name'] == course.course_name].index[0], post_index=loop.index0) }}" class="mt-3">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="content" placeholder="Write a reply..." required>
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="fas fa-reply me-1"></i>Reply
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">No discussion posts yet. Be the first to start a discussion!</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('course_detail', index=courses[courses['course_name'] == course.course_name].index[0]) }}" 
+               class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-1"></i>Back to Course
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

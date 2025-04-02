@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="fas fa-question-circle me-2"></i>{{ course.course_name }} - Quiz
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {% for question in quiz.questions %}
+                <div class="mb-4">
+                    <h5 class="mb-3">Question {{ loop.index }}</h5>
+                    <p class="lead">{{ question.question }}</p>
+                    <div class="list-group">
+                        {% for option in question.options %}
+                        <label class="list-group-item">
+                            <input class="form-check-input me-1" type="radio" name="question_{{ loop.index0 }}" value="{{ loop.index0 }}" required>
+                            {{ option }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane me-1"></i>Submit Quiz
+                    </button>
+                </div>
+            </form>
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('course_detail', index=index) }}" 
+                   class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Course
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
