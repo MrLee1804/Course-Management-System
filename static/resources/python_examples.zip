@@ -1,1 +1,11 @@
+example1.py:
+print("Hello, World!")
 
+example2.py:
+def greet(name):
+    print(f"Hello, {name}!")
+
+example3.py:
+numbers = [1, 2, 3, 4, 5]
+for num in numbers:
+    print(num * 2) 

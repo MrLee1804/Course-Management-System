@@ -1,0 +1,28 @@
+Python Installation Guide
+
+1. Download Python
+   - Visit python.org
+   - Click "Downloads"
+   - Choose your operating system
+   - Download the latest version
+
+2. Install Python
+   - Run the installer
+   - Check "Add Python to PATH"
+   - Click "Install Now"
+
+3. Verify Installation
+   - Open terminal/command prompt
+   - Type: python --version
+   - You should see the Python version number
+
+4. Install pip (if not included)
+   - Download get-pip.py
+   - Run: python get-pip.py
+
+5. Test pip
+   - Type: pip --version
+   - You should see the pip version number
+
+For more information, visit:
+https://docs.python.org/3/using/index.html 
